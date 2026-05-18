@@ -2615,7 +2615,7 @@ function deleteSubmission(groupId){
   subsRef.child(groupId).remove().then(()=>{toast('ההגשה נמחקה','ok');renderTeacherSubmissions();});
 }
 
-function teacherSubmitFor(groupId){if(!confirm('להגיש עבודה ריקה עבור קבוצה זו?'))return;const g=groups.find(x=>x.id===groupId);if(!g){toast('קבוצה לא נמצאה','err');return;}const t=TOPICS.find(x=>x.n===g.t);const topicName=g.t===0?(g.customTopic||'נושא חופשי'):(t?t.nm:'');const sub={groupId:g.id,members:g.ms||[],topic:topicName,topicNum:g.t,link:'',fileData:'',fileName:'',text:'הוגש על ידי המורה',dt:new Date().toLocaleDateString('he-IL'),ts:Date.now()};subsRef.child(g.id).set(sub).then(()=>{toast('ההגשה בוצעה בהצלחה','ok');renderTeacherSubmissions();}).catch(e=>{toast('שגיאה','err');console.error(e);});}function exportGrades(){
+function teacherSubmitFor(groupId){document.querySelectorAll('.tsf-btn').forEach(b=>b.onclick=null);if(!confirm('להגיש עבודה ריקה עבור קבוצה זו?'))return;const g=groups.find(x=>x.id===groupId);if(!g){toast('קבוצה לא נמצאה','err');return;}const t=TOPICS.find(x=>x.n===g.t);const topicName=g.t===0?(g.customTopic||'נושא חופשי'):(t?t.nm:'');const sub={groupId:g.id,members:g.ms||[],topic:topicName,topicNum:g.t,link:'',fileData:'',fileName:'',text:'הוגש על ידי המורה',dt:new Date().toLocaleDateString('he-IL'),ts:Date.now()};subsRef.child(g.id).set(sub).then(()=>{toast('ההגשה בוצעה בהצלחה','ok');renderTeacherSubmissions();}).catch(e=>{toast('שגיאה','err');console.error(e);});}function exportGrades(){
   Promise.all([subsRef.once('value'),db.ref('grades').once('value')]).then(([subSnap,gradeSnap])=>{
     const subs=Object.values(subSnap.val()||{});
     const grades=gradeSnap.val()||{};
@@ -2728,7 +2728,7 @@ function submitWork(){
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
-loadMyId();renderT();renderCustomCard();startFirebaseListener();
+loadMyId();renderT();renderCustomCard();startFirebaseListener();document.addEventListener('click',function(e){var b=e.target.closest('.tsf-btn');if(b)teacherSubmitFor(b.dataset.gid);});
 </script>
 </body>
 </html>
